@@ -1,0 +1,21 @@
+1. Create a wireframe
+- an overview/ design of the project
+- draw.io
+
+2. Create React App
+- BEM naming convention
+
+3. Cleanup project
+- clean slate, margin: 0
+
+4. Structure of Covid Tracker
+
+5. Create header
+6. Create info boxes
+7. create table
+8. create chart
+9. create map
+- leaflet (open source, no api)
+10. styling
+11. deploy
+
