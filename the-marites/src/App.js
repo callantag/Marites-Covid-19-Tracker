@@ -9,6 +9,7 @@ import {
 import InfoBox from "./InfoBox";
 import Map from "./Map";
 import Table from "./Table";
+import LineGraph from "./LineGraph";
 import { sortData } from "./util";
 import "./App.css";
 
@@ -19,7 +20,7 @@ function App() {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    fetch("https://disease.sh/v3/covid-19/all")
+    fetch("https://disease.sh/v3/covid-19/all?yesterday=true")
       .then((res) => res.json())
       .then((data) => {
         setCountryInfo(data);
@@ -28,9 +29,25 @@ function App() {
 
   useEffect(() => {
     const getCountriesData = async () => {
-      await fetch("https://disease.sh/v3/covid-19/countries")
+      await fetch("https://disease.sh/v3/covid-19/countries?yesterday=true")
         .then((res) => res.json())
         .then((data) => {
+          console.log(data);
+          // cases
+          const haveCases = data.filter((country) => country.todayCases > 0);
+          const withCases = haveCases.map((country) => country.country);
+          console.log("These countries have cases: " + withCases);
+          // deaths
+          const haveDeaths = data.filter((country) => country.todayDeaths > 0);
+          const withDeaths = haveDeaths.map((country) => country.country);
+          console.log("These countries have Deaths: " + withDeaths);
+          // recovered
+          const haveRecovered = data.filter(
+            (country) => country.todayRecovered > 0
+          );
+          const withRecovered = haveRecovered.map((country) => country.country);
+          console.log("These countries have Recovered: " + withRecovered);
+
           const countries = data.map((country) => ({
             name: country.country,
             value: country.countryInfo.iso2,
@@ -49,8 +66,8 @@ function App() {
 
     const url =
       countryCode === "worldwide"
-        ? "https://disease.sh/v3/covid-19/all"
-        : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+        ? "https://disease.sh/v3/covid-19/all?yesterday=true"
+        : `https://disease.sh/v3/covid-19/countries/${countryCode}?yesterday=true`;
 
     fetch(url)
       .then((res) => res.json())
@@ -97,14 +114,20 @@ function App() {
         </div>
 
         <Map />
+        <p>Data displayed are based on the totals from previous day.</p>
+        <p>Source: https://disease.sh</p>
       </div>
       <Card className="app__right">
         <CardContent>
-          <h3>Live Cases by Country</h3>
+          <h3>Active Cases by Country</h3>
+          <button style={{ margin: "20px 10px 0 0" }}>
+            Sort by number of active cases
+          </button>
+          <button style={{ marginTop: "20px" }}>Sort by name</button>
           <Table countries={tableData} />
 
           <h3>Worldwide New Cases</h3>
-          {/* Graph */}
+          <LineGraph />
         </CardContent>
       </Card>
     </div>
