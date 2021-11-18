@@ -40,11 +40,21 @@ const options = {
       grid: {
         display: false,
       },
+      time: {
+        format: "MM/DD/YY",
+        tooltipFormat: "ll",
+      },
     },
 
     y: {
       grid: {
         display: false,
+      },
+      ticks: {
+        // Include a dollar sign in the ticks
+        callback: function (value, index, values) {
+          return numeral(value).format("0a");
+        },
       },
     },
   },
