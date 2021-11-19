@@ -11,6 +11,7 @@ import Map from "./Map";
 import Table from "./Table";
 import LineGraph from "./LineGraph";
 import { sortData } from "./util";
+import "leaflet/dist/leaflet.css";
 import "./App.css";
 
 function App() {
@@ -18,6 +19,9 @@ function App() {
   const [country, setCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
+  const [mapCenter, setMapCenter] = useState({ lat: 12.8797, lng: 121.774 });
+  const [mapZoom, setMapZoom] = useState(3);
+  const [mapCountries, setMapCountries] = useState([]);
 
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all?yesterday=true")
@@ -40,6 +44,7 @@ function App() {
           const sortedData = sortData(data);
           setTableData(sortedData);
           setCountries(countries);
+          setMapCountries(data);
         });
     };
     getCountriesData();
@@ -58,6 +63,9 @@ function App() {
       .then((data) => {
         setCountry(countryCode);
         setCountryInfo(data);
+
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(4);
       });
   };
 
@@ -97,9 +105,7 @@ function App() {
           />
         </div>
 
-        <Map />
-        <p>Data displayed are based on totals from the previous day.</p>
-        <p>Source: https://disease.sh</p>
+        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
       </div>
       <Card className="app__right">
         <CardContent>
@@ -113,6 +119,10 @@ function App() {
           <h3>Worldwide New Cases</h3>
           <LineGraph />
         </CardContent>
+        <div className="footnote">
+          <p>Data displayed are based on totals from the previous day.</p>
+          <p>Source: https://disease.sh</p>
+        </div>
       </Card>
     </div>
   );
